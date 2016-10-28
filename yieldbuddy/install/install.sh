@@ -1,5 +1,5 @@
 #!/bin/sh
-echo "Welcome to the yieldbuddy installer."
+echo "Welcome to the yieldbuddy installer V1.7c."
 echo ""
 echo "Copying site to /var/www/yieldbuddy (As with most steps, this will take some time)"
 sudo mkdir /var/www/
@@ -18,8 +18,9 @@ echo "Installing ybdaemon to /etc/init.d/ybdaemon as start-up daemon"
 sudo cp -R ./scripts/yieldbuddy /etc/init.d/yieldbuddy
 sudo chmod +x /etc/init.d/yieldbuddy
 sudo update-rc.d yieldbuddy defaults
-echo ""
+echo "Making home folder and "
 echo "Linking /var/www/ to homefolder..."
+sudo mkdir /home/pi/www/
 sudo ln -s /var/www/ /home/pi/www/
 echo ""
 echo "Changing file permissions..."
@@ -45,12 +46,12 @@ sudo chmod 751 /var/www/yieldbuddy/www/upload
 sudo chmod 751 /var/www/yieldbuddy/www/users/
 echo ""
 read -p "Would you like to patch '/boot/cmdline.txt' (Frees up the serial interface)? (y/n) " REPLY
-if [ "$REPLY" == "y" ]; then
+if [ "$REPLY" = "y" ]; then
 sudo cp ./config/cmdline.txt /boot/cmdline.txt
 fi
 echo ""
 read -p "Would you like to patch '/etc/inittab' (Frees up the serial interface)? (y/n) " REPLY
-if [ "$REPLY" == "y" ]; then
+if [ "$REPLY" = "y" ]; then
 sudo cp ./config/inittab /etc/inittab
 fi
 echo ""
@@ -63,7 +64,7 @@ echo ""
 sudo apt-get -y install ifupdown ifplugd wicd-curses
 echo ""
 read -p "Would you like to setup a wireless network? (y/n) " REPLY
-if [ "$REPLY" == "y" ]; then
+if [ "$REPLY" = "y" ]; then
 echo "Starting wireless network manager."
 sudo wicd-curses
 clear
@@ -74,16 +75,17 @@ echo ""
 sudo apt-get -y install python-serial minicom
 echo ""
 echo "Attempting to test serial device... This can be very touchy!  SO READ THE INSTRUCTIONS CAREFULLY:"
-read -p "*** You will have to exit this program after around 10 seconds using ***CTRL+A (let go) then 'q'***, select 'YES' to *NOT* reset the device. Press any key to continue. ***" REPLY
-minicom -b 115200 -o -D /dev/ttyAMA0
+# read -p "*** You will have to exit this program after around 10 seconds using ***CTRL+A (let go) then 'q'***, select 'YES' to *NOT* reset the device. Press any key to continue. ***" REPLY
+# minicom -b 115200 -o -D /dev/ttyAMA0
 echo ""
 echo "Installing Web Server packages - this will take some time!"
 echo ""
 sudo apt-get -y install python-sqlite nginx #apache2 #python-mysqldb
 echo ""
 read -p "Would you like to copy site setting and overwrite nginx config files in '/etc/nginx' (Setups up yieldbuddy site with PHP)? (y/n) " REPLY
-if [ "$REPLY" == "y" ]; then
-sudo cp ./config/nginx/* /etc/nginx
+if [ "$REPLY" = "y" ]; then
+echo "Copying nginx config file"
+sudo cp ./config/nginx/*/* /etc/nginx
 echo "Setup for document root: /var/www/    If you want, change '/etc/nginx/sites-enabled/default' to set the website's root directory.  ie  'root /mnt/usb'"
 fi
 echo ""
@@ -92,7 +94,7 @@ echo ""
 sudo apt-get -y install php5  php5-cli php5-fpm php5-sqlite
 echo ""
 read -p "Would you like to patch '/etc/php5/fpm/pool.d/www.conf' (Properly redirects PHP requests)? (y/n) " REPLY
-if [ "$REPLY" == "y" ]; then
+if [ "$REPLY" = "y" ]; then
 sudo cp ./config/php5/www.conf /etc/php5/fpm/pool.d/www.conf
 fi
 echo "Installing PyCrypto 2.6 - this will take quite a bit of time!  Go grab a coffee."
@@ -109,12 +111,12 @@ echo ""
 sudo apt-get -y install motion
 echo ""
 read -p "Would you like to overwrite '/etc/motion/motion.conf' with the default yieldbuddy settings? (y/n) " REPLY
-if [ "$REPLY" == "y" ]; then
+if [ "$REPLY" = "y" ]; then
 cd ../.
 sudo cp ./config/motion.conf /etc/motion/motion.conf
 echo ""
 read -p "Would you like to start the motion web server now? (y/n) " REPLY
-if [ "$REPLY" == "y" ]; then
+if [ "$REPLY" = "y" ]; then
 sudo mkdir /var/run
 sudo mkdir /var/run/motion
 sudo touch /var/run/motion/motion.pid
@@ -124,10 +126,10 @@ fi
 echo ""
 echo "Installing SQLite3..."
 echo ""
-sudo apt-get -y install sqlite
+sudo apt-get -y install sqlite3
 echo ""
 read -p "Would you like to copy SQLiteManager to '/var/www/SQLiteManager'...? (y/n) " REPLY
-if [ "$REPLY" == "y" ]; then
+if [ "$REPLY" = "y" ]; then
 echo ""
 sudo cp -R ./SQLiteManager /var/www/SQLiteManager
 fi
