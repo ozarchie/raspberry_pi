@@ -18,8 +18,8 @@ def drawInterface():
 	print '\033[1m' #Bold
 	print("\033[0;0H")
 	os.system('clear')
-	os.system('cat splashscreen')
-	print("\033[16;78Hyieldbuddy v1.17a")
+#	os.system('cat splashscreen')
+	print("\033[16;78Hyieldbuddy v1.18")
 	print("\033[7;75H[Interface IP Addresses]")
 	print("\033[39;0H[  Lastest Messages  ]-------------------------------------------------------------------------------------")
 	print '\033[0m' #Un-Bold
@@ -135,8 +135,6 @@ def AESdecrypt(password, ciphertext, base64=False):
 	    paddingLength = ord(plaintextWithPadding[-1])
 	    plaintext = plaintextWithPadding[:-paddingLength]
 	    return plaintext
-		#a = AESencrypt("password", "ABC")
-		#print AESdecrypt("password", a)
 	except AESdycrypt_Exception as detail:
 		print "\nError (AESencrypt): " + str(detail)
 		addMessageLog("Error (AESencrypt): " + str(detail))
@@ -205,10 +203,7 @@ def drawInterfaceIPs():
 			print("\033[" + str(i+8) + ";80H")
 			print("\033[" + str(i+8) + ";80H" + str(i+1) + ")" + str(IP_Addresses[i]))	
 			i=i+1
-	
-		
 
-	
 def checkSerial():
 	
 	try:
@@ -703,7 +698,7 @@ for i in range(0, 9):
 	i=i+1
 	messagelog[i] = " "
 
-print 'yieldbuddy v1.17a\r\n'
+print 'yieldbuddy v1.18\r\n'
 app_path = str( os.path.dirname(os.path.realpath(__file__)) )+"/"
 print 'Application Path: ' + app_path + '\n'
 
@@ -712,22 +707,23 @@ print 'Checking For Possible Serial Devices:'
 f=os.system("ls /dev/tty*")
 
 print '\r'
-print 'Enter the path to the serial device.  (/dev/ttyAMA0):'
+print 'Enter the path to the serial device.  (/dev/ttyUSB0):'
 #device_path=raw_input()
-device_path='/dev/ttyAMA0'    #override device_path (no user input)
+device_path='/dev/ttyUSB0'    #override device_path (no user input)
 if device_path == '':
-	device_path = '/dev/ttyAMA0'
+	device_path = '/dev/ttyUSB0'
 device_path = device_path.strip("\n")
 try:
 	ser = serial.Serial(device_path,115200,timeout=10)
 	ser.flushInput()
+	print 'Opening serial device - /dev/TTYUSB0'
 except:
 	print 'Error opening serial device.'
-	#sys.exit(0)
+	sys.exit(0)
 	
 
 #Insert sensors datapoint into SQL db at this interval (in seconds):
-TakeDataPoint_Every = 90   #default: 300 seconds (Every 5 minutes) (12 times per hour) --> 288 Datapoints a day
+TakeDataPoint_Every = 60   #default: 300 seconds (Every 5 minutes) (12 times per hour) --> 288 Datapoints a day
 
 #Start initial time sync counter at this number:
 timesync = 17
@@ -738,7 +734,7 @@ first_timesync = False
 startTime = datetime.now()
 
 os.system('clear')
-os.system('cat splashscreen')
+#os.system('cat splashscreen')
 #time.sleep(3)
 ser.write("\n") #Send blank line to initiate serial communications
 
@@ -747,27 +743,6 @@ f_AESkey=open(app_path+'/www/settings/sql/key','r+')
 AESkey=f_AESkey.readline()
 AESkey=AESkey.rstrip('\n')
 f_AESkey.close()
-
-#Load SQL Settings (MySQL)
-#f_sql_address=open(app_path+'www/settings/sql/address','r+')
-#sql_address=f_sql_address.readline()
-#sql_address=sql_address.rstrip('\n')
-#f_sql_address.close()
-
-#f_sql_username=open(app_path+'www/settings/sql/username','r+')
-#sql_username=f_sql_username.readline()
-#sql_username=sql_username.rstrip('\n')
-#f_sql_username.close()
-
-#f_sql_password=open(app_path+'www/settings/sql/password','r+')
-#sql_password=f_sql_password.readline()
-#sql_password=sql_password.rstrip('\n')
-#f_sql_password.close()
-
-#f_sql_database=open(app_path+'www/settings/sql/database','r+')
-#sql_database=f_sql_database.readline()
-#sql_database=sql_database.rstrip('\n')
-#f_sql_database.close()
 
 # Open database connection
 db = lite.connect(app_path+'www/sql/yieldbuddy.sqlite3', timeout=10)
